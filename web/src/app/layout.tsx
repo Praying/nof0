@@ -60,7 +60,10 @@ export default function RootLayout({
         <SWRProvider>
           <div className="min-h-screen">
             <Header />
-            <GlobalPauseOverlay />
+            {/* 默认展示「接口暂停」公告；自建后端部署时用 NEXT_PUBLIC_SHOW_PAUSE_OVERLAY=0 关闭 */}
+            {process.env.NEXT_PUBLIC_SHOW_PAUSE_OVERLAY !== "0" && (
+              <GlobalPauseOverlay />
+            )}
             {children}
           </div>
           <HelpButton />

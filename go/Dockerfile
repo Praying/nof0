@@ -1,5 +1,6 @@
 # Build stage
-FROM golang:1.21-alpine AS builder
+# go.mod 要求 go >= 1.22.3
+FROM golang:1.23-alpine AS builder
 
 WORKDIR /build
 
@@ -27,6 +28,8 @@ RUN apk --no-cache add ca-certificates
 # Copy binary from builder
 COPY --from=builder /build/nof0-api .
 COPY --from=builder /build/etc ./etc
+# executor.yaml 的 output_validation.schema_path 引用该目录
+COPY --from=builder /build/schemas ./schemas
 
 # Create non-root user
 RUN addgroup -g 1000 nof0 && \
