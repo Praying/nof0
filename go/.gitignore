@@ -168,6 +168,9 @@ site/
 *_gen.go
 mock_*.go
 *.mock.go
+# 例外：goctl 生成的模型代码需入库（见 docs/data-store.md“ensure generated code compiles and is committed”），
+# 否则全新克隆无法通过 go build / Docker 构建。
+!internal/model/*_gen.go
 
 # Goctl generated (if regenerating)
 # Uncomment if you want to regenerate code from .api files

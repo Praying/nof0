@@ -63,7 +63,7 @@ func (m *customTraderConfigModel) InsertTx(ctx context.Context, tx *sql.Tx, data
 	if _, err := tx.ExecContext(ctx, query, data.Id, data.Version, data.ExchangeProvider, data.MarketProvider, data.AllocationPct, data.Detail, data.CreatedBy); err != nil {
 		return err
 	}
-	return m.DelCacheCtx(ctx, fmt.Sprintf("%s%v", cacheTraderConfigIdPrefix, data.Id))
+	return m.DelCacheCtx(ctx, fmt.Sprintf("%s%v", cachePublicTraderConfigIdPrefix, data.Id))
 }
 
 func (m *customTraderConfigModel) UpdateTx(ctx context.Context, tx *sql.Tx, data *TraderConfig) error {
@@ -81,5 +81,5 @@ where id = $1`, m.tableName())
 	if _, err := tx.ExecContext(ctx, query, data.Id, data.Version, data.ExchangeProvider, data.MarketProvider, data.AllocationPct, data.Detail); err != nil {
 		return err
 	}
-	return m.DelCacheCtx(ctx, fmt.Sprintf("%s%v", cacheTraderConfigIdPrefix, data.Id))
+	return m.DelCacheCtx(ctx, fmt.Sprintf("%s%v", cachePublicTraderConfigIdPrefix, data.Id))
 }
