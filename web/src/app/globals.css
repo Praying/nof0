@@ -2,10 +2,17 @@
 
 :root {
   /* default to dark theme */
-  --background: #0a0a0a;
+  --background: #09090b;
   --foreground: #ededed;
   --header-h: 40px;
   --ticker-h: 28px;
+
+  /* 收益/亏损颜色体系（金融看板统一配色） */
+  --pnl-up: #22c55e;
+  --pnl-down: #ef4444;
+  --pnl-neutral: #94a3b8;
+  --pnl-up-soft: rgba(34, 197, 94, 0.14);
+  --pnl-down-soft: rgba(239, 68, 68, 0.14);
   /* Theme-aware logo chips (light defaults) */
   --chart-logo-bg: rgba(255, 255, 255, 0.9);
   --chart-logo-ring: rgba(255, 255, 255, 0.28);
@@ -32,8 +39,8 @@
   --watermark-color: rgba(255, 255, 255, 0.06);
 
   /* Chart/UI themed variables (dark defaults) */
-  --panel-bg: #0a0a0a;
-  --panel-border: rgba(255, 255, 255, 0.1);
+  --panel-bg: #18181b;
+  --panel-border: #27272a;
   --muted-text: #a1a1aa; /* zinc-400 */
   --axis-tick: #a1a1aa;
   --grid-stroke: rgba(255, 255, 255, 0.08);
@@ -52,7 +59,7 @@
   /* Chart series hover states */
   --series-opacity-normal: 1;
   --series-opacity-dimmed: 0.2;
-  --header-bg: rgba(0, 0, 0, 0.7);
+  --header-bg: rgba(9, 9, 11, 0.72);
   --header-border: rgba(255, 255, 255, 0.1);
 }
 
@@ -103,6 +110,12 @@
   --tooltip-bg: #ffffff;
   --tooltip-border: rgba(0, 0, 0, 0.12);
   --tooltip-fg: #18181b;
+  /* 亮色主题：收益色略加深保证对比度 */
+  --pnl-up: #16a34a;
+  --pnl-down: #dc2626;
+  --pnl-neutral: #64748b;
+  --pnl-up-soft: rgba(22, 163, 74, 0.12);
+  --pnl-down-soft: rgba(220, 38, 38, 0.12);
   /* apply only in light theme: fallback for too-light line colors */
   --line-too-light-fallback: #4b5563; /* neutral dark for visibility */
   --table-row-alt: rgba(0, 0, 0, 0.05);
@@ -112,8 +125,15 @@
   --header-border: rgba(0, 0, 0, 0.1);
 }
 :root[data-theme="dark"] {
-  --background: #0a0a0a;
+  --background: #09090b;
   --foreground: #ededed;
+  --panel-bg: #18181b;
+  --panel-border: #27272a;
+  --pnl-up: #22c55e;
+  --pnl-down: #ef4444;
+  --pnl-neutral: #94a3b8;
+  --pnl-up-soft: rgba(34, 197, 94, 0.14);
+  --pnl-down-soft: rgba(239, 68, 68, 0.14);
   --chart-logo-bg: rgba(255, 255, 255, 0.9);
   --chart-logo-ring: rgba(255, 255, 255, 0.28);
   --logo-chip-bg: rgba(255, 255, 255, 0.06);
@@ -127,7 +147,7 @@
   --table-row-alt: rgba(255, 255, 255, 0.05);
   --link-hover: #ffffff;
   --brand-accent: #c084fc; /* purple-300 */
-  --header-bg: rgba(0, 0, 0, 0.7);
+  --header-bg: rgba(9, 9, 11, 0.72);
   --header-border: rgba(255, 255, 255, 0.1);
 }
 
@@ -288,4 +308,138 @@ body {
 /* When chart container is hovered and has a focused series */
 .chart-container:has(g.series:hover) g.series:not(:hover) {
   opacity: var(--series-opacity-dimmed);
+}
+
+/* ============================================================
+   收益/亏损统一配色（金融看板）
+   ============================================================ */
+.pnl-up {
+  color: var(--pnl-up);
+}
+.pnl-down {
+  color: var(--pnl-down);
+}
+.pnl-neutral {
+  color: var(--pnl-neutral);
+}
+/* 重点收益数字：绿色渐变 */
+.pnl-hero-up {
+  background: linear-gradient(90deg, #22c55e, #10b981);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.pnl-hero-down {
+  background: linear-gradient(90deg, #ef4444, #f97316);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ============================================================
+   多空胶囊标签
+   ============================================================ */
+.side-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.6;
+}
+.side-long {
+  background: var(--pnl-up-soft);
+  color: var(--pnl-up);
+}
+.side-short {
+  background: var(--pnl-down-soft);
+  color: var(--pnl-down);
+}
+
+/* 盈亏进度条（meter：填充表幅度，底轨为同色浅阶） */
+.pnl-meter {
+  height: 4px;
+  border-radius: 999px;
+  overflow: hidden;
+  width: 100%;
+}
+.pnl-meter-track-up {
+  background: var(--pnl-up-soft);
+}
+.pnl-meter-track-down {
+  background: var(--pnl-down-soft);
+}
+.pnl-meter-fill-up {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--pnl-up);
+}
+.pnl-meter-fill-down {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--pnl-down);
+}
+
+/* ============================================================
+   玻璃卡片 / KPI / Hero 数字
+   ============================================================ */
+.glass-panel {
+  background: color-mix(in oklab, var(--panel-bg) 78%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--panel-border);
+  border-radius: 14px;
+}
+
+/* Hero 大数字（页面主焦点，比例数字而非等宽数字） */
+.hero-figure {
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-size: clamp(34px, 5.5vw, 52px);
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  font-variant-numeric: normal;
+}
+
+/* 排名徽章 */
+.rank-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.rank-gold {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: #451a03;
+}
+.rank-silver {
+  background: linear-gradient(135deg, #e5e7eb, #9ca3af);
+  color: #1f2937;
+}
+.rank-bronze {
+  background: linear-gradient(135deg, #fdba74, #c2410c);
+  color: #431407;
+}
+
+/* 成就标签胶囊 */
+.achv-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  border: 1px solid var(--chip-border);
+  background: var(--btn-active-bg);
+  color: var(--foreground);
+  white-space: nowrap;
 }

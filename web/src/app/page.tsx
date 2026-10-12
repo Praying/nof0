@@ -1,13 +1,17 @@
 import PriceTicker from "@/components/layout/PriceTicker";
 import AccountValueChart from "@/components/chart/AccountValueChart";
-import { PositionsPanel } from "@/components/tabs/PositionsPanel";
+import HeroKpis from "@/components/home/HeroKpis";
 import { Suspense } from "react";
 
 export default function Home() {
   return (
     <main className="w-full terminal-scan flex flex-col h-[calc(100vh-var(--header-h))]">
       <PriceTicker />
-      <section className="grid grid-cols-1 gap-3 p-3 overflow-hidden lg:grid-cols-3 lg:gap-3 lg:p-3 h-[calc(100vh-var(--header-h)-var(--ticker-h))]">
+      {/* Hero 数据区：总资产 + 72h 变化 + KPI 条 */}
+      <div className="px-3 pt-3 lg:px-4 lg:pt-3">
+        <HeroKpis />
+      </div>
+      <section className="grid grid-cols-1 gap-3 p-3 overflow-hidden lg:grid-cols-3 lg:gap-3 lg:p-3 flex-1 min-h-[420px]">
         <div className="lg:col-span-2 h-full">
           <AccountValueChart />
         </div>

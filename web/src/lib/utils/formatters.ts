@@ -15,14 +15,17 @@ export const fmtTs = (unixSeconds?: number | null) =>
     ? "--"
     : format(unixSeconds * 1000, "yyyy-MM-dd HH:mm:ss");
 
-export const pnlClass = (n?: number | null) =>
-  n == null || Number.isNaN(n)
-    ? "text-zinc-300"
-    : n > 0
-      ? "text-green-400"
-      : n < 0
-        ? "text-red-400"
-        : "text-zinc-300";
+// 收益方向：up=盈利 / down=亏损 / neutral=持平或缺失
+export type PnlTone = "up" | "down" | "neutral";
+
+export const pnlTone = (n?: number | null): PnlTone =>
+  n == null || Number.isNaN(n) ? "neutral" : n > 0 ? "up" : n < 0 ? "down" : "neutral";
+
+// 统一收益/亏损配色（globals.css 设计令牌）
+export const pnlClass = (n?: number | null) => {
+  const tone = pnlTone(n);
+  return tone === "up" ? "pnl-up" : tone === "down" ? "pnl-down" : "pnl-neutral";
+};
 
 export const withSign = (n?: number | null, digits = 2) =>
   n == null

@@ -19,6 +19,7 @@ import {
   resolveCanonicalId,
 } from "@/lib/model/meta";
 import { adjustLuminance } from "@/lib/ui/useDominantColors";
+import { fmtUSD } from "@/lib/utils/formatters";
 import ErrorBanner from "@/components/ui/ErrorBanner";
 import { SkeletonBlock } from "@/components/ui/Skeleton";
 
@@ -39,6 +40,31 @@ const MAX_POINTS_72H = 600;
 
 export default function AccountValueChart() {
   const { series, modelIds, isLoading, isError } = useAccountValueSeries();
+
+  // 图表标注：全市场合计口径的 当前净值 / 历史新高 / 最大回撤
+  const chartStats = useMemo(() => {
+    const totals: { t: number; v: number }[] = [];
+    for (const p of series) {
+      let sum = 0;
+      for (const id of modelIds) sum += Number(p[id] ?? 0);
+      if (sum > 0) totals.push({ t: p.timestamp, v: sum });
+    }
+    if (!totals.length) return undefined;
+    let peak = -Infinity;
+    let runningPeak = -Infinity;
+    let maxDd = 0;
+    for (const p of totals) {
+      if (p.v > runningPeak) runningPeak = p.v;
+      if (p.v > peak) peak = p.v;
+      const dd = runningPeak > 0 ? ((p.v - runningPeak) / runningPeak) * 100 : 0;
+      if (dd < maxDd) maxDd = dd;
+    }
+    return {
+      current: totals[totals.length - 1].v,
+      peak,
+      drawdown: maxDd,
+    };
+  }, [series, modelIds]);
   const [range, setRange] = useState<Range>("ALL");
   const [mode, setMode] = useState<Mode>("$");
   const cutoffTimeRef = useRef<number>(0);
@@ -277,6 +303,14 @@ export default function AccountValueChart() {
     return m;
   }, [models, data, lastIdxById]);
 
+  // 当前净值前三名（图例徽章用）
+  const top3Ids = useMemo(() => {
+    return models
+      .filter((id) => typeof lastValById[id] === "number")
+      .sort((a, b) => (lastValById[b] ?? 0) - (lastValById[a] ?? 0))
+      .slice(0, 3);
+  }, [models, lastValById]);
+
   const formatValue = (v: number | undefined) => {
     if (typeof v !== "number") return "--";
     if (mode === "%") return `${v >= 0 ? "+" : ""}${v.toFixed(1)}%`;
@@ -468,6 +502,32 @@ export default function AccountValueChart() {
           </div>
         </div>
       </div>
+      {/* 图表标注：当前净值 / 历史新高 / 最大回撤（全市场合计口径） */}
+      {chartStats && (
+        <div className="mb-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px]">
+          <span className="inline-flex items-center gap-1">
+            <span style={{ color: "var(--pnl-neutral)" }}>●</span>
+            <span style={{ color: "var(--muted-text)" }}>当前净值</span>
+            <span className="tabular-nums" style={{ color: "var(--foreground)" }}>
+              {fmtUSD(chartStats.current)}
+            </span>
+          </span>
+          <span className="inline-flex items-center gap-1">
+            <span className="pnl-up">▲</span>
+            <span style={{ color: "var(--muted-text)" }}>历史新高</span>
+            <span className="tabular-nums pnl-up">
+              {fmtUSD(chartStats.peak)}
+            </span>
+          </span>
+          <span className="inline-flex items-center gap-1">
+            <span className="pnl-down">▼</span>
+            <span style={{ color: "var(--muted-text)" }}>最大回撤</span>
+            <span className="tabular-nums pnl-down">
+              {chartStats.drawdown.toFixed(1)}%
+            </span>
+          </span>
+        </div>
+      )}
       {/* Legend below chart */}
       <ErrorBanner
         message={isError ? "账户价值数据源暂时不可用，请稍后重试。" : undefined}
@@ -570,7 +630,7 @@ export default function AccountValueChart() {
                         connectNulls
                         className={`series series-${cssSafe(id)}`}
                         stroke={getStrokeColor(id)}
-                        strokeWidth={1.8}
+                        strokeWidth={2.2}
                         isAnimationActive={shouldAnimate}
                         animationDuration={shouldAnimate ? 400 : 0}
                         animationEasing="ease-out"
@@ -659,6 +719,15 @@ export default function AccountValueChart() {
                                 style={{ background: getModelColor(id) }}
                               />
                             )}
+                            {top3Ids.indexOf(id) === 0 && (
+                              <span aria-hidden="true">🥇</span>
+                            )}
+                            {top3Ids.indexOf(id) === 1 && (
+                              <span aria-hidden="true">🥈</span>
+                            )}
+                            {top3Ids.indexOf(id) === 2 && (
+                              <span aria-hidden="true">🥉</span>
+                            )}
                             <span className="truncate max-w-[9ch]">
                               {getModelName(id)}
                             </span>
@@ -735,6 +804,15 @@ export default function AccountValueChart() {
                                 className="inline-block h-3 w-3 rounded-full"
                                 style={{ background: getModelColor(id) }}
                               />
+                            )}
+                            {top3Ids.indexOf(id) === 0 && (
+                              <span aria-hidden="true">🥇</span>
+                            )}
+                            {top3Ids.indexOf(id) === 1 && (
+                              <span aria-hidden="true">🥈</span>
+                            )}
+                            {top3Ids.indexOf(id) === 2 && (
+                              <span aria-hidden="true">🥉</span>
                             )}
                             <span className="truncate max-w-[9ch] sm:max-w-none">
                               {getModelName(id)}

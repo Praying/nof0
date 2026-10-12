@@ -488,16 +488,16 @@ function signalColors(s?: string) {
   const k = String(s || "").toLowerCase();
   if (k === "buy" || k === "long") {
     return {
-      fg: "#16a34a",
-      bg: "color-mix(in oklab, #16a34a 10%, transparent)",
-      border: "color-mix(in oklab, #16a34a 45%, transparent)",
+      fg: "var(--pnl-up)",
+      bg: "color-mix(in oklab, var(--pnl-up) 10%, transparent)",
+      border: "color-mix(in oklab, var(--pnl-up) 45%, transparent)",
     };
   }
   if (k === "sell" || k === "short") {
     return {
-      fg: "#ef4444",
-      bg: "color-mix(in oklab, #ef4444 10%, transparent)",
-      border: "color-mix(in oklab, #ef4444 45%, transparent)",
+      fg: "var(--pnl-down)",
+      bg: "color-mix(in oklab, var(--pnl-down) 10%, transparent)",
+      border: "color-mix(in oklab, var(--pnl-down) 45%, transparent)",
     };
   }
   // hold/default = blue

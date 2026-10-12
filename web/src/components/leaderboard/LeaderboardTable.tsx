@@ -8,6 +8,8 @@ import { useSharpeMap } from "@/lib/api/hooks/useSharpeMap";
 import Tooltip from "@/components/ui/Tooltip";
 import { getModelName } from "@/lib/model/meta";
 import { ModelLogoChip } from "@/components/shared/ModelLogo";
+import Sparkline from "@/components/ui/Sparkline";
+import { useModelEquitySeries } from "@/lib/api/hooks/useModelEquitySeries";
 import { fmtUSD, pnlClass, fmtPct } from "@/lib/utils/formatters";
 import ErrorBanner from "@/components/ui/ErrorBanner";
 import { SkeletonRow } from "@/components/ui/Skeleton";
@@ -96,6 +98,7 @@ export default function LeaderboardTable({
                 dir={sortDir}
                 onClick={() => toggleSort("return_pct")}
               />
+              <Th label="趋势" />
               {mode === "advanced" ? (
                 <>
                   <ThSort
@@ -162,7 +165,25 @@ export default function LeaderboardTable({
                         "color-mix(in oklab, var(--panel-border) 50%, transparent)",
                     }}
                   >
-                    <td className="py-1 pr-2 lg:pr-3">{idx + 1}</td>
+                    <td className="py-1 pr-2 lg:pr-3">
+                      {idx < 3 ? (
+                        <span
+                          className={`rank-badge h-5 w-5 text-[11px] ${
+                            idx === 0
+                              ? "rank-gold"
+                              : idx === 1
+                                ? "rank-silver"
+                                : "rank-bronze"
+                          }`}
+                        >
+                          {idx + 1}
+                        </span>
+                      ) : (
+                        <span style={{ color: "var(--muted-text)" }}>
+                          {idx + 1}
+                        </span>
+                      )}
+                    </td>
                     <td className="py-1 pr-2 lg:pr-3">
                       <a
                         className={`inline-flex items-center gap-2 hover:underline`}
@@ -190,6 +211,9 @@ export default function LeaderboardTable({
                       )}
                     >
                       {renderReturnPct(r.return_pct)}
+                    </td>
+                    <td className="py-1 pr-2 lg:pr-3">
+                      <RowSparkline modelId={r.id} />
                     </td>
                     {mode === "advanced" ? (
                       <>
@@ -451,4 +475,18 @@ function ThSort({
       </button>
     </th>
   );
+}
+
+/** 行内净值火花线（独立组件以遵守 hooks 规则） */
+function RowSparkline({ modelId }: { modelId: string }) {
+  const { values, isLoading } = useModelEquitySeries(modelId);
+  if (isLoading && values.length < 2)
+    return (
+      <div
+        className="skeleton-bg h-4 w-16 rounded"
+        style={{ opacity: 0.5 }}
+        aria-hidden="true"
+      />
+    );
+  return <Sparkline values={values} width={72} height={22} strokeWidth={1.6} />;
 }

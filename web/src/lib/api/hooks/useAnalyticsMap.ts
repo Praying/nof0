@@ -14,7 +14,7 @@ export interface AnalyticsRow {
     overall_pnl_without_fees?: number;
   };
   winners_losers_breakdown_table?: {
-    win_rate?: number; // 0-1
+    win_rate?: number; // 0-100（API 直接返回百分数，如 31.58 表示 31.58%）
     avg_winners_holding_period?: number; // minutes
     avg_losers_holding_period?: number; // minutes
   };

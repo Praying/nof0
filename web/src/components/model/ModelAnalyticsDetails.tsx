@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useAnalyticsMap } from "@/lib/api/hooks/useAnalyticsMap";
+import { getModelName } from "@/lib/model/meta";
 import { fmtUSD } from "@/lib/utils/formatters";
 
 export default function ModelAnalyticsDetails({
@@ -30,11 +31,22 @@ export default function ModelAnalyticsDetails({
       }}
     >
       <div className="flex items-center justify-between px-3 py-2">
-        <div
-          className="ui-sans text-sm font-semibold"
-          style={{ color: "var(--foreground)" }}
-        >
-          分析详情
+        <div className="flex items-center gap-2.5">
+          <span className="text-lg">🧠</span>
+          <div>
+            <div
+              className="ui-sans text-sm font-semibold"
+              style={{ color: "var(--foreground)" }}
+            >
+              {getModelName(modelId)} 决策分析
+            </div>
+            <div
+              className="ui-sans text-[11px]"
+              style={{ color: "var(--muted-text)" }}
+            >
+              查看最近策略推理 · 交易概览 · 信号统计
+            </div>
+          </div>
         </div>
         <button
           className="ui-sans rounded border px-2 py-1 text-xs chip-btn"
@@ -44,7 +56,7 @@ export default function ModelAnalyticsDetails({
           }}
           onClick={() => setOpen((v) => !v)}
         >
-          {open ? "收起" : "展开"}
+          {open ? "收起" : "展开详情 →"}
         </button>
       </div>
       {open && (
@@ -247,7 +259,7 @@ function statColored(label: string, value?: string, num?: number) {
 
 function pnlColor(n?: number | null) {
   if (n == null || Number.isNaN(n)) return "var(--muted-text)";
-  return n > 0 ? "#22c55e" : n < 0 ? "#ef4444" : "var(--muted-text)";
+  return n > 0 ? "var(--pnl-up)" : n < 0 ? "var(--pnl-down)" : "var(--pnl-neutral)";
 }
 
 function intFmt(n?: number) {

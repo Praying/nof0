@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { usePositions } from "@/lib/api/hooks/usePositions";
 import { fmtUSD, pnlClass } from "@/lib/utils/formatters";
+import { SideBadge, PnlMeter, PnlArrow } from "@/components/ui/PositionSide";
 import clsx from "clsx";
 import ErrorBanner from "@/components/ui/ErrorBanner";
 import { SkeletonRow } from "@/components/ui/Skeleton";
@@ -116,6 +117,11 @@ export function PositionsPanel() {
             (acc, p) => acc + (p.unrealized_pnl || 0),
             0,
           );
+          // 组内最大绝对盈亏，用作盈亏进度条的标尺
+          const maxAbsPnl = filtered.reduce(
+            (acc, p) => Math.max(acc, Math.abs(p.unrealized_pnl || 0)),
+            0,
+          );
           const sumMargin = filtered.reduce(
             (acc, p) => acc + (p.margin || 0),
             0,
@@ -172,12 +178,8 @@ export function PositionsPanel() {
                   style={{ color: "var(--muted-text)" }}
                 >
                   未实现盈亏合计：
-                  <span
-                    className={
-                      totalUnreal >= 0 ? "text-green-400" : "text-red-400"
-                    }
-                  >
-                    {fmtUSD(totalUnreal)}
+                  <span className={pnlClass(totalUnreal)}>
+                    <PnlArrow value={totalUnreal} /> {fmtUSD(totalUnreal)}
                   </span>
                 </div>
               </div>
@@ -242,11 +244,10 @@ export function PositionsPanel() {
                               "color-mix(in oklab, var(--panel-border) 50%, transparent)",
                           }}
                         >
-                          <td
-                            className="py-1.5 pr-3"
-                            style={{ color: isLong ? "#16a34a" : "#ef4444" }}
-                          >
-                            {isLong ? "做多" : "做空"}
+                          <td className="py-1.5 pr-3">
+                            <SideBadge
+                              side={isLong ? "LONG" : "SHORT"}
+                            />
                           </td>
                           <td className="py-1.5 pr-3">
                             <span className="inline-flex items-center gap-1">
@@ -263,13 +264,22 @@ export function PositionsPanel() {
                           <td className="py-1.5 pr-3">
                             <ExitPlanPeek plan={p.exit_plan} />
                           </td>
-                          <td
-                            className={clsx(
-                              "py-1.5 pr-3 tabular-nums",
-                              pnlClass(p.unrealized_pnl),
-                            )}
-                          >
-                            {fmtUSD(p.unrealized_pnl)}
+                          <td className="py-1.5 pr-3">
+                            <div className="flex items-center gap-2">
+                              <span
+                                className={clsx(
+                                  "tabular-nums",
+                                  pnlClass(p.unrealized_pnl),
+                                )}
+                              >
+                                <PnlArrow value={p.unrealized_pnl} />{" "}
+                                {fmtUSD(p.unrealized_pnl)}
+                              </span>
+                              <PnlMeter
+                                pnl={p.unrealized_pnl}
+                                scale={maxAbsPnl}
+                              />
+                            </div>
                           </td>
                         </tr>
                       );
@@ -336,14 +346,14 @@ function ExitPlanPeek({ plan }: { plan?: any }) {
     <>
       <button
         ref={btnRef}
-        className="ui-sans rounded border px-2 py-0.5 text-[11px]"
+        className="ui-sans whitespace-nowrap rounded border px-2 py-0.5 text-[11px]"
         style={{
           borderColor: "var(--panel-border)",
           color: "var(--foreground)",
         }}
         onClick={() => setOpen((v) => !v)}
       >
-        查看
+        🎯 退出计划
       </button>
       {open &&
         pos &&
@@ -364,17 +374,23 @@ function ExitPlanPeek({ plan }: { plan?: any }) {
           >
             <div className="ui-sans mb-1 font-semibold">退出计划</div>
             <div className="terminal-text text-xs leading-relaxed">
-              <div>
-                目标价：
-                <span className="tabular-nums">
-                  {plan.profit_target ?? "—"}
+              <div className="flex items-center gap-2">
+                <span className="pnl-up">🎯</span>
+                <span style={{ color: "var(--muted-text)" }}>目标价</span>
+                <span className="tabular-nums pnl-up">
+                  {plan.profit_target != null ? fmtUSD(plan.profit_target) : "—"}
                 </span>
               </div>
-              <div>
-                止损价：
-                <span className="tabular-nums">{plan.stop_loss ?? "—"}</span>
+              <div className="mt-1 flex items-center gap-2">
+                <span className="pnl-down">🛑</span>
+                <span style={{ color: "var(--muted-text)" }}>止损价</span>
+                <span className="tabular-nums pnl-down">
+                  {plan.stop_loss != null ? fmtUSD(plan.stop_loss) : "—"}
+                </span>
               </div>
-              <div>失效条件：</div>
+              <div className="mt-1" style={{ color: "var(--muted-text)" }}>
+                失效条件
+              </div>
               <div className="whitespace-pre-wrap">
                 {plan.invalidation_condition || "—"}
               </div>

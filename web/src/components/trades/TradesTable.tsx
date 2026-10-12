@@ -128,7 +128,7 @@ export default function TradesTable() {
 }
 
 function TradeItem({ t }: { t: TradeRow }) {
-  const sideColor = t.side === "long" ? "#16a34a" : "#ef4444"; // green-600 / red-500
+  const sideColor = t.side === "long" ? "var(--pnl-up)" : "var(--pnl-down)";
   const modelColor = getModelColor(t.model_id || "");
   const symbol = (t.symbol || "").toUpperCase();
   const qty = t.quantity;
@@ -236,8 +236,8 @@ function coinSrc(symbol: string): string | undefined {
 }
 
 function pnlColor(n?: number | null) {
-  if (n == null || Number.isNaN(n)) return "var(--muted-text)";
-  return n > 0 ? "#22c55e" : n < 0 ? "#ef4444" : "var(--muted-text)";
+  if (n == null || Number.isNaN(n)) return "var(--pnl-neutral)";
+  return n > 0 ? "var(--pnl-up)" : n < 0 ? "var(--pnl-down)" : "var(--pnl-neutral)";
 }
 
 function humanTime(sec?: number) {

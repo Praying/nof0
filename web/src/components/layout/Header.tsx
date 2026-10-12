@@ -26,19 +26,26 @@ export function Header() {
         style={{ color: "var(--foreground)" }}
       >
         {/* 左：品牌 */}
-        <div className="flex min-w-0 flex-1">
+        <div className="flex min-w-0 flex-1 items-center gap-2">
           <Link
             href="/"
-            className={`font-semibold tracking-wide ui-sans`}
+            className={`font-semibold tracking-wide ui-sans flex items-center gap-1.5`}
             style={{ color: "var(--brand-accent)" }}
           >
-            nof0
+            <span aria-hidden="true">◉</span>
+            <span>nof0</span>
           </Link>
+          <span
+            className="ui-sans hidden text-[10px] tracking-[0.22em] uppercase sm:inline"
+            style={{ color: "var(--muted-text)" }}
+          >
+            AI Trading Arena
+          </span>
         </div>
 
         {/* 中：主导航（绝对居中） */}
         <nav
-          className="ui-sans absolute left-1/2 -translate-x-1/2 flex items-center gap-6"
+          className="ui-sans absolute left-1/2 -translate-x-1/2 flex items-center gap-7 text-[13px] font-medium"
           aria-label="Primary"
         >
           <Link href="/" className={hoverLink} style={{ color: "inherit" }}>

@@ -1,5 +1,6 @@
 import ModelSelectorBar from "@/components/model/ModelSelectorBar";
 import ModelStatsSummary from "@/components/model/ModelStatsSummary";
+import ModelEquityCurve from "@/components/model/ModelEquityCurve";
 import ModelOpenPositions from "@/components/model/ModelOpenPositions";
 import ModelRecentTradesTable from "@/components/model/ModelRecentTradesTable";
 import ModelAnalyticsDetails from "@/components/model/ModelAnalyticsDetails";
@@ -17,7 +18,10 @@ export default async function ModelDetailPage({
         {/* 顶部模型选择按钮（无边框容器） */}
         <ModelSelectorBar activeId={id} />
 
-        {/* 顶部统计摘要（两段，整行展示） */}
+        {/* 净值曲线：用户最关心的视图，置于最顶部 */}
+        <ModelEquityCurve modelId={id} />
+
+        {/* 核心指标（KPI 网格） */}
         <ModelStatsSummary modelId={id} />
 
         {/* 分析详情（可收起/展开） */}

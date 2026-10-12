@@ -4,6 +4,7 @@ import { useAccountTotals } from "@/lib/api/hooks/useAccountTotals";
 import { useAnalyticsMap } from "@/lib/api/hooks/useAnalyticsMap";
 import { usePositions } from "@/lib/api/hooks/usePositions";
 import { useTrades } from "@/lib/api/hooks/useTrades";
+import { useSharpeMap } from "@/lib/api/hooks/useSharpeMap";
 import { fmtUSD } from "@/lib/utils/formatters";
 import Tooltip from "@/components/ui/Tooltip";
 
@@ -66,6 +67,20 @@ export default function ModelStatsSummary({ modelId }: { modelId: string }) {
     () => trades.filter((t) => t.model_id === modelId),
     [trades, modelId],
   );
+
+  // 夏普比率（与排行榜同口径）
+  const { map: sharpeMap } = useSharpeMap();
+  const sharpe = sharpeMap[modelId];
+
+  // 胜率：已平仓交易中净盈利笔数占比
+  const winRate = useMemo(() => {
+    const closed = modelTrades.filter(
+      (t) => typeof t.realized_net_pnl === "number",
+    );
+    if (!closed.length) return undefined;
+    const wins = closed.filter((t) => (t.realized_net_pnl ?? 0) > 0).length;
+    return wins / closed.length;
+  }, [modelTrades]);
   const avgLev = useMemo(() => {
     // 1) 首选 overall_trades_overview_table.avg_convo_leverage
     const fromOverall = (
@@ -157,8 +172,8 @@ export default function ModelStatsSummary({ modelId }: { modelId: string }) {
         >
           不含资金费与返佣（Does not include funding costs and rebates）
         </div>
-        {/* 优先展示与视觉权重更高的三项 */}
-        <div className="mt-2 grid grid-cols-1 gap-3 md:grid-cols-3">
+        {/* 核心指标 KPI 网格（Dashboard 风格） */}
+        <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-4 md:grid-cols-3">
           <Stat
             label="账户总权益"
             value={fmtUSD(totalAccountValue)}
@@ -176,15 +191,30 @@ export default function ModelStatsSummary({ modelId }: { modelId: string }) {
             }
           />
           <Stat
+            label="夏普比率"
+            value={sharpe != null ? sharpe.toFixed(2) : "—"}
+            tip={<div>口径：收益序列的年化夏普比率（对齐排行榜口径）。</div>}
+          />
+          <Stat
+            label="胜率"
+            value={winRate != null ? `${(winRate * 100).toFixed(1)}%` : "—"}
+            tip={<div>口径：已平仓交易中净盈利笔数占比。</div>}
+          />
+          <Stat
             label="已实现盈亏"
             value={fmtUSD(netRealized)}
             tone="pnl"
             num={netRealized}
             tip={<div>口径：已平仓交易累计净盈亏。</div>}
           />
+          <Stat
+            label="交易数"
+            value={modelTrades.length ? String(modelTrades.length) : "—"}
+            tip={<div>口径：最近成交记录笔数。</div>}
+          />
         </div>
         {/* 次级信息置于下一行 */}
-        <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
+        <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
           <Stat
             label="可用现金（估）"
             value={fmtUSD(availableCash)}
@@ -300,13 +330,11 @@ function Stat({
         style={{
           color:
             tone === "pnl"
-              ? num == null || Number.isNaN(num)
-                ? "var(--muted-text)"
+              ? num == null || Number.isNaN(num) || num === 0
+                ? "var(--pnl-neutral)"
                 : num > 0
-                  ? "#22c55e"
-                  : num < 0
-                    ? "#ef4444"
-                    : "var(--muted-text)"
+                  ? "var(--pnl-up)"
+                  : "var(--pnl-down)"
               : "var(--foreground)",
         }}
       >

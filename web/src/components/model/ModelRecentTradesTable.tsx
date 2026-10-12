@@ -137,14 +137,14 @@ export default function ModelRecentTradesTable({
 
 function sideColor(s?: string) {
   return s === "long"
-    ? "#16a34a"
+    ? "var(--pnl-up)"
     : s === "short"
-      ? "#ef4444"
+      ? "var(--pnl-down)"
       : "var(--muted-text)";
 }
 function pnlColor(n?: number | null) {
-  if (n == null || Number.isNaN(n)) return "var(--muted-text)";
-  return n > 0 ? "#22c55e" : n < 0 ? "#ef4444" : "var(--muted-text)";
+  if (n == null || Number.isNaN(n)) return "var(--pnl-neutral)";
+  return n > 0 ? "var(--pnl-up)" : n < 0 ? "var(--pnl-down)" : "var(--pnl-neutral)";
 }
 function holdHM(entry?: number, exit?: number) {
   if (!entry) return "—";
