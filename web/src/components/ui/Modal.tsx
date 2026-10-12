@@ -29,7 +29,7 @@ export default function Modal({
         onClick={onClose}
       />
       <div
-        className="relative z-[101] w-full max-w-lg rounded-md border p-4 shadow-xl"
+        className="relative z-[100] w-full max-w-lg rounded-md border p-4 shadow-xl"
         style={{
           borderColor: "var(--panel-border)",
           background: "var(--panel-bg)",

@@ -443,3 +443,124 @@ body {
   color: var(--foreground);
   white-space: nowrap;
 }
+
+/* ============================================================
+   交互状态：焦点环 / 按压反馈 / 平滑滚动（无障碍要求）
+   ============================================================ */
+html {
+  scroll-behavior: smooth;
+}
+
+:root {
+  --focus-ring: 0 0 0 2px var(--background), 0 0 0 4px var(--brand-accent);
+  --shadow-tint: 0 8px 32px rgba(9, 9, 11, 0.45);
+  /* z-index 阶梯：替代任意数值 */
+  --z-sticky: 50;
+  --z-overlay: 100;
+  --z-popover: 200;
+}
+
+/* 键盘可见焦点环；鼠标点击不显示 */
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: 6px;
+}
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+/* 可按压元素的物理反馈 */
+.chip-btn,
+button {
+  transition:
+    background-color 160ms ease,
+    color 160ms ease,
+    transform 120ms ease,
+    opacity 160ms ease;
+}
+.chip-btn:active,
+button:active {
+  transform: scale(0.98);
+}
+
+/* 跳到主内容（键盘用户） */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 8px;
+  z-index: calc(var(--z-popover) + 10);
+  padding: 8px 14px;
+  border-radius: 8px;
+  background: var(--brand-accent);
+  color: var(--background);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+}
+.skip-link:focus-visible {
+  left: 8px;
+}
+
+/* ============================================================
+   表面质感：颗粒噪点（打破数字平面感）+ 标题排版
+   ============================================================ */
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: calc(var(--z-popover) + 5);
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+/* 玻璃卡片：1px 内描边模拟边缘折射（真玻璃质感） */
+.glass-panel {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    var(--shadow-tint);
+}
+
+/* 入场动画：KPI/Hero 级联淡入 */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.rise-in {
+  animation: rise-in 420ms ease both;
+}
+.rise-in-2 {
+  animation: rise-in 420ms ease 80ms both;
+}
+.rise-in-3 {
+  animation: rise-in 420ms ease 160ms both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .rise-in,
+  .rise-in-2,
+  .rise-in-3 {
+    animation: none;
+  }
+  .chip-btn:active,
+  button:active {
+    transform: none;
+  }
+}

@@ -1,17 +1,24 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useTheme } from "@/store/useTheme";
 import SocialLinks from "./SocialLinks";
 
+const NAV_ITEMS = [
+  { href: "/", label: "实盘" },
+  { href: "/leaderboard", label: "排行榜" },
+  { href: "/models", label: "模型" },
+] as const;
+
 export function Header() {
   const theme = useTheme((s) => s.theme);
-  const resolved = useTheme((s) => s.resolved);
   const setTheme = useTheme((s) => s.setTheme);
+  const pathname = usePathname();
+
+  const isActive = (href: string) =>
+    href === "/" ? pathname === "/" : pathname.startsWith(href);
   const barCls = `sticky top-0 z-50 w-full border-b backdrop-blur`;
-  const textCls = "";
-  const hoverLink = "";
-  const brandCls = "";
 
   return (
     <header
@@ -48,23 +55,30 @@ export function Header() {
           className="ui-sans absolute left-1/2 -translate-x-1/2 flex items-center gap-7 text-[13px] font-medium"
           aria-label="Primary"
         >
-          <Link href="/" className={hoverLink} style={{ color: "inherit" }}>
-            实盘
-          </Link>
-          <Link
-            href="/leaderboard"
-            className={hoverLink}
-            style={{ color: "inherit" }}
-          >
-            排行榜
-          </Link>
-          <Link
-            href="/models"
-            className={hoverLink}
-            style={{ color: "inherit" }}
-          >
-            模型
-          </Link>
+          {NAV_ITEMS.map((item) => {
+            const active = isActive(item.href);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={active ? "page" : undefined}
+                className="relative"
+                style={{
+                  color: active ? "var(--foreground)" : "var(--muted-text)",
+                }}
+              >
+                {item.label}
+                {/* 当前页指示条 */}
+                {active && (
+                  <span
+                    className="absolute -bottom-1.5 left-0 right-0 h-[2px] rounded-full"
+                    style={{ background: "var(--brand-accent)" }}
+                    aria-hidden="true"
+                  />
+                )}
+              </Link>
+            );
+          })}
         </nav>
 
         {/* 右：主题切换占位，保证中间绝对定位不受挤压 */}

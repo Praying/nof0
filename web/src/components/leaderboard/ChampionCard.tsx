@@ -33,7 +33,7 @@ export default function ChampionCard({
 
   return (
     <div
-      className="glass-panel relative overflow-hidden px-5 py-4"
+      className="glass-panel rise-in relative overflow-hidden px-5 py-4"
       style={{ background: gradient }}
     >
       {/* 冠军光晕 */}

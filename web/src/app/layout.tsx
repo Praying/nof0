@@ -30,6 +30,19 @@ export const metadata: Metadata = {
   title: "nof0 - AI 模型加密货币交易可视化",
   description:
     "用真实数据和清晰可视化，回答「哪个模型更会赚」的朴素问题。展示多个 AI 模型的加密货币交易表现对比。",
+  openGraph: {
+    title: "nof0 · AI Trading Arena",
+    description:
+      "用真实数据和清晰可视化，回答「哪个模型更会赚」的朴素问题。多个 AI 模型同台实盘竞技。",
+    siteName: "nof0",
+    type: "website",
+    locale: "zh_CN",
+  },
+  twitter: {
+    card: "summary",
+    title: "nof0 · AI Trading Arena",
+    description: "AI 模型加密货币交易竞技场——用真实盈亏回答「哪个模型更会赚」。",
+  },
 };
 
 export default function RootLayout({
@@ -53,8 +66,12 @@ export default function RootLayout({
         </Script>
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${plexMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${plexMono.variable} grain antialiased`}
       >
+        {/* 键盘用户跳转链 */}
+        <a href="#main-content" className="skip-link">
+          跳到主内容
+        </a>
         <ThemeProvider />
         <PageActivityProvider />
         <SWRProvider>

@@ -71,8 +71,9 @@ export default function HeroKpis() {
 
   return (
     <section className="grid grid-cols-1 gap-3 lg:grid-cols-6">
+      {/* 首屏级联入场由 rise-in 系列控制 */}
       {/* Hero：账户总资产 + 累计收益 */}
-      <div className="glass-panel relative overflow-hidden px-5 py-4 lg:col-span-2">
+      <div className="glass-panel rise-in relative overflow-hidden px-5 py-4 lg:col-span-2">
         <div
           className="ui-sans text-[11px] tracking-[0.18em] uppercase"
           style={{ color: "var(--muted-text)" }}
@@ -80,7 +81,7 @@ export default function HeroKpis() {
           总资产
         </div>
         <div className="mt-1 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-          <div className="hero-figure">
+          <div className="hero-figure text-balance">
             {isLoading && stats.totalEquity == null ? (
               <span style={{ color: "var(--muted-text)" }}>--</span>
             ) : (
@@ -124,7 +125,7 @@ export default function HeroKpis() {
       </div>
 
       {/* KPI 条（移动端两行两列，桌面端与 Hero 同排） */}
-      <div className="grid grid-cols-2 gap-3 lg:contents">
+      <div className="rise-in-2 grid grid-cols-2 gap-3 lg:contents">
         <StatTile
           label="今日收益"
           value={

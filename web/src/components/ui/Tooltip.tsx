@@ -180,7 +180,7 @@ export default function Tooltip({
             {/* 在桌面悬浮模式不渲染遮罩，避免阻挡鼠标；触屏设备保留遮罩用于关闭 */}
             {coarse && (
               <span
-                className="fixed inset-0 z-[9998]"
+                className="fixed inset-0 z-[199]"
                 onClick={() => setOpen(false)}
                 onTouchStart={() => setOpen(false)}
               />
@@ -190,7 +190,7 @@ export default function Tooltip({
               className={clsx(
                 // 桌面悬浮下禁用指针事件，避免拦截鼠标
                 coarse ? "pointer-events-auto" : "pointer-events-none",
-                "fixed z-[9999] rounded-md border p-2 text-[11px] shadow-lg",
+                "fixed z-[200] rounded-md border p-2 text-[11px] shadow-lg",
                 transform,
               )}
               style={{

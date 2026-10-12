@@ -13,7 +13,7 @@ export default async function ModelDetailPage({
   const { id: raw } = await params;
   const id = decodeURIComponent(raw || "");
   return (
-    <main className="min-h-screen w-full px-3 py-3 sm:px-4 sm:py-4 lg:px-8 lg:py-6">
+    <main id="main-content" className="min-h-screen w-full px-3 py-3 sm:px-4 sm:py-4 lg:px-8 lg:py-6">
       <div className="mx-auto w-full max-w-7xl space-y-3">
         {/* 顶部模型选择按钮（无边框容器） */}
         <ModelSelectorBar activeId={id} />

@@ -5,7 +5,7 @@ import { Suspense } from "react";
 
 export default function Home() {
   return (
-    <main className="w-full terminal-scan flex flex-col h-[calc(100vh-var(--header-h))]">
+    <main id="main-content" className="w-full terminal-scan flex flex-col h-[calc(100dvh-var(--header-h))]">
       <PriceTicker />
       {/* Hero 数据区：总资产 + 72h 变化 + KPI 条 */}
       <div className="px-3 pt-3 lg:px-4 lg:pt-3">

@@ -49,7 +49,7 @@ export default function ModelEquityCurve({ modelId }: { modelId: string }) {
   }, [values]);
 
   return (
-    <div className="glass-panel p-4">
+    <div className="glass-panel rise-in p-4">
       <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
         <div>
           <div

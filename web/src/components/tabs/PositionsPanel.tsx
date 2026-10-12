@@ -366,7 +366,7 @@ function ExitPlanPeek({ plan }: { plan?: any }) {
               position: "fixed",
               top: pos.top,
               left: pos.left,
-              zIndex: 9999,
+              zIndex: 200,
               background: "var(--panel-bg)",
               borderColor: "var(--panel-border)",
               color: "var(--foreground)",
